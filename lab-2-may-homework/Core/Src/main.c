@@ -42,6 +42,11 @@
 TIM_HandleTypeDef htim2;
 
 UART_HandleTypeDef huart2;
+/* Modify this constant to define how fast or slow
+ * the brightness of the LED changes.
+   Ex: For 0 it's really fast, 1 a bit slower, 2 even slower, and so on. */
+uint8_t const LOOP_PRESCALER = 4;
+uint8_t counter = 0;
 
 /* USER CODE BEGIN PV */
 
@@ -103,6 +108,16 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	// Check if counter is possibly greater than prescaler to reset it in such a scenario as well.
+	if (counter >= LOOP_PRESCALER) {
+	  TIM2->CCR1 -= 1;
+	  if (TIM2->CCR1 == 0) {
+		TIM2->CCR1 = 319999;
+	  }
+	  counter = 0;
+	}
+	counter++;
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
